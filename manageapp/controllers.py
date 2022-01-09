@@ -82,7 +82,25 @@ class TeacherController:
         tea_model.delete()
         user.delete()
 
+class AddSubjectToTeacher:
 
+    def add_subject_to_teacher(self,teachers_id: int,subject_id: int):
+        sub_obj = models.Subject.objects.get(id=subject_id)
+        tea_obj = models.Teacher.objects.get(id=teachers_id)
+        if(tea_obj.subject_name != None):
+            raise serializers.ValidationError(
+                {"result": False, "msg": "the name which you selected already has subject name "},
+                code="validation_error",
+                )
+        if(models.Teacher.objects.filter(subject_name=sub_obj).exists()):
+            raise serializers.ValidationError(
+                {"result": False, "msg": "the subject with teacher is already exsists "},
+                code="validation_error",
+                )
+        else:
+            tea_obj.subject_name = sub_obj
+            tea_obj.save()
+            
     
 
 

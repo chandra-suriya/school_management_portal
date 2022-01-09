@@ -7,5 +7,6 @@ urlpatterns = [
     path('createsubject/', views.SubjectView().as_view(),name='createsubject'),
     path('createsubject/<int:pk>', views.SubjectView().as_view(),name='createsubject'),
     path('createteacher/',views.TeacherView().as_view(),name='createteacher'),
+    path('assign_subject/',views.AssignSubject().as_view(),name='assign_subject')
 
 ]

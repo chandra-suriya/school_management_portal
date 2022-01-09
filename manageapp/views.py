@@ -201,8 +201,9 @@ class TeacherView(views.APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         tea_cont = controllers.TeacherController()
         teacher_list = tea_cont.get_teacher()
+        tea_list = serialisers.TeacherSerializer(teacher_list, many=True)
         return response.Response({
-                "data": teacher_list.data,
+                "data": tea_list.data,
                 "result": True,
                }
             )
@@ -242,8 +243,22 @@ class TeacherView(views.APIView):
         })
 
 class AssignSubject(views.APIView):
-    pass
 
+    def put(self,request):  
+        user = request.user
+        data = request.data
+        teachers_id = data.get('teacher id')
+        subject_id = data.get('subject id')
+        if not (user.is_superuser):
+            return response.Response({
+                    "msg":"user permission is not allowed",
+                    "result":"false"
+                }, status=status.HTTP_400_BAD_REQUEST)
+        tea_assign = controllers.AddSubjectToTeacher()
+        tea_assign.add_subject_to_teacher(teachers_id, subject_id)
+        return response.Response({
+            "msg":"added sucessfully",
+        })
 
 
 

@@ -1,4 +1,4 @@
-from teacherapp import models
+from teacherapp import models,serialisers
 from rest_framework import serializers, response, parsers, status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
@@ -26,4 +26,11 @@ class StudentController:
         stu_user = models.Student.objects.get(name=user)
         stu_attendence = models.Attendance.objects.create(student=stu_user,presented=present)
         return stu_attendence
-
+    
+    def list_student(self,name: str):
+        user_obj = User.objects.get(username=name)
+        if(models.Student.objects.filter(name=user_obj).exists()):
+            pass
+        stu_data = models.Student.objects.filter(name=user_obj)
+        stu_list =serialisers.StudentSerializer(stu_data,many=True)
+        return stu_list

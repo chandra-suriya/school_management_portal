@@ -128,4 +128,27 @@ class StudentAttendees(views.APIView):
             )
            
 class StudentList(views.APIView):
-    
+
+    def post(self,request):
+        user = request.user
+        data = request.data
+        name = data.get('name')
+        if not(user.is_staff):
+            return response.Response(
+                {
+                    "result": False,
+                    "msg": "Permission denied"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        student =  controllers.StudentController()
+        stu_values1 = student.list_student(name)
+        return response.Response(
+                {
+                    "result": True,
+                    "data":stu_values1.data
+                },
+                status=status.HTTP_200_OK,
+            ) 
+      
+        

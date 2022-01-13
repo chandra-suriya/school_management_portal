@@ -3,5 +3,6 @@ from teacherapp import views
 
 urlpatterns = [
      path('teachersignin/',views.TeacherSignin().as_view(),name='teachersignin'),
-     path('createstudent/',views.CreateStudent().as_view(),name='createstudent')
+     path('createstudent/',views.CreateStudent().as_view(),name='createstudent'),
+     path('studentlist/',views.StudentList().as_view(),name='studentlist')
 ]

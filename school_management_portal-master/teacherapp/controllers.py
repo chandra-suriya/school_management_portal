@@ -34,3 +34,10 @@ class StudentController:
         stu_data = models.Student.objects.filter(name=user_obj)
         stu_list =serialisers.StudentSerializer(stu_data,many=True)
         return stu_list
+    
+    def stu_detail(self,pk: int):
+        user_obj = User.objects.get(id=pk)
+        stu_obj = models.Student.objects.get(name=user_obj)
+        total_absent = models.Attendence.objects.filter(student=stu_obj,present=False).count()
+        total_present = models.Attendence.objects.filter(student=stu_obj,present=True).count()
+        return user_obj,total_absent,total_present

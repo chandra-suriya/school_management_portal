@@ -152,3 +152,28 @@ class StudentList(views.APIView):
             ) 
       
         
+class StudentProfile(views.APIView):
+
+    def get(self,request,pk):
+        user = request.user
+        if not(user.is_staff):
+            return response.Response(
+                {
+                    "result": False,
+                    "msg": "Permission denied"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        student =  controllers.StudentController()
+        user_obj, total_absent, total_present = student.stu_detail(pk)  
+        return response.Response(
+            {
+                "result": True,
+                "name": user_obj.username,
+                "email": user_obj.email,
+                "no of days leave":total_absent,
+                "no of days present":total_present
+            },
+            status=status.HTTP_200_OK,
+        )
+        

@@ -8,6 +8,57 @@ from django.core import validators
 from rest_framework.authtoken.models import Token
 # Create your views here.
 
+
+class Adminsignin(views.APIView):
+    permission_classes = [permissions.AllowAny]
+    def post(self, request):
+        email_id = request.data.get("email", "")
+        password = request.data.get("password", "")
+        if not email_id or not password:
+            return response.Response({
+                "result": False,
+                "msg": "Email or password is missing"
+            }, status=status.HTTP_400_BAD_REQUEST)    
+        try:
+            user = User.objects.get(email=email_id, is_active=True)
+        except exceptions.ObjectDoesNotExist:
+            return response.Response(
+                {
+                    "result": False,
+                    "msg": "User Does not exist"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+                )
+        if not user.is_superuser:
+            return response.Response(
+                {
+                    "result": False,
+                    "msg": "Permission denied"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+                )
+        else:
+            is_valid = user.check_password(password)
+            if not is_valid:
+                return response.Response(
+                    {
+                        "result": False,
+                        "msg": "Enter valid email and password"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                    )
+            else:
+                token = Token.objects.get_or_create(user=user)[0]
+                return response.Response({
+                    "result": True,
+                    "msg": "success",
+                    "data": {
+                        "userid": user.pk,
+                        "token": token.key,
+                        "username": user.username,
+                        "email": user.email,
+                    }}, status=status.HTTP_200_OK,
+                )
 class StandardView(views.APIView):
     permission_classes = [permissions.IsAdminUser]
 
@@ -258,7 +309,6 @@ class AssignSubject(views.APIView):
         return response.Response({
             "msg":"added sucessfully",
         })
-
 
 
 

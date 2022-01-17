@@ -18,7 +18,7 @@ class StudentController:
         stu_obj.save()
         token = Token.objects.get_or_create(user=user)[0] 
         tea_obj = Teacher.objects.get(name=user)
-        models.Student.objects.create(name=stu_obj)
+        models.Student.objects.create(name=stu_obj,teacher=tea_obj)
         return token, stu_obj
 
     def take_attendance(self,stu_id: int,present :bool):
@@ -27,11 +27,12 @@ class StudentController:
         stu_attendence = models.Attendance.objects.create(student=stu_user,presented=present)
         return stu_attendence
     
-    def list_student(self,name: str):
+    def list_student(self,name: str, user: object):
         user_obj = User.objects.get(username=name)
         if(models.Student.objects.filter(name=user_obj).exists()):
             pass
-        stu_data = models.Student.objects.filter(name=user_obj)
+        tea_obj = Teacher.objects.get(name=user)
+        stu_data = models.Student.objects.filter(name=user_obj,teacher=tea_obj)
         stu_list =serialisers.StudentSerializer(stu_data,many=True)
         return stu_list
     
@@ -41,3 +42,10 @@ class StudentController:
         total_absent = models.Attendence.objects.filter(student=stu_obj,present=False).count()
         total_present = models.Attendence.objects.filter(student=stu_obj,present=True).count()
         return user_obj,total_absent,total_present
+
+class TeachersController:
+
+    def create_homework(self,user: object,homework: str):
+        teacher_obj = models.TeacherProfile.objects.get(teacher=user)
+        teacher_obj.homework = homework
+        teacher_obj.save()

@@ -142,7 +142,7 @@ class StudentList(views.APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         student =  controllers.StudentController()
-        stu_values1 = student.list_student(name)
+        stu_values1 = student.list_student(name,user)
         return response.Response(
                 {
                     "result": True,
@@ -177,3 +177,51 @@ class StudentProfile(views.APIView):
             status=status.HTTP_200_OK,
         )
         
+class AddHomework(views.APIView):
+    
+    def post(self, request):
+        user = request.user
+        data = request.data
+        homework = data.get('homework')
+        if not(user.is_staff):
+            return response.Response(
+                {
+                    "result": False,
+                    "msg": "Permission denied"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        teacher =  controllers.TeachersController()
+        teacher.add_homework(homework)
+        return response.Response(
+            {
+                "result": True,
+                "msg":"Home work has been created "
+            },
+            status=status.HTTP_200_OK,
+        )
+
+class viewHomework(views.APIView):
+
+    def get(self, request):
+        user = request.user
+        if (user.is_staff):
+            return response.Response(
+                {
+                    "result": False,
+                    "msg": "Permission denied"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        stu_obj = models.Student.objects.get(user=user)
+        user_obj = User.objects.get(username = stu_obj.teacher.name.username)
+        tea_prof = models.TeacherProfile.objects.get(teacher=user_obj)
+        return response.Response(
+                {
+                    "result": True,
+                    "msg": tea_prof.homework
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+

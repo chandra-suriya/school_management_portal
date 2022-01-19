@@ -12,8 +12,9 @@ from rest_framework.authtoken.models import Token
 class TeacherSignin(views.APIView):
     permission_classes = [permissions.AllowAny]
     def post(self, request):
-        email_id = request.data.get("email", "")
-        password = request.data.get("password", "")
+        data = request.data
+        email_id = data.get("email")
+        password = data.get("password")
         if not email_id or not password:
             return response.Response({
                 "result": False,

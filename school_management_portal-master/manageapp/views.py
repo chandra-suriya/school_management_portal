@@ -258,7 +258,7 @@ class TeacherView(views.APIView):
                }
             )
 
-    def put(self,pk):
+    def put(self,request,pk):
         user = request.user
         data = request.data
         username = data.get('username')

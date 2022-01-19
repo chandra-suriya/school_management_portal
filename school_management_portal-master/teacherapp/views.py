@@ -201,11 +201,11 @@ class AddHomework(views.APIView):
             status=status.HTTP_200_OK,
         )
 
-class viewHomework(views.APIView):
+class ViewHomework(views.APIView):
 
     def get(self, request):
         user = request.user
-        if (user.is_staff):
+        if (user.is_staff and user.is_superuser):
             return response.Response(
                 {
                     "result": False,
@@ -213,15 +213,12 @@ class viewHomework(views.APIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        stu_obj = models.Student.objects.get(user=user)
-        user_obj = User.objects.get(username = stu_obj.teacher.name.username)
-        tea_prof = models.TeacherProfile.objects.get(teacher=user_obj)
+        student = controllers.StudentController()
+        stu_homework = student.viewhomework(user)    
         return response.Response(
                 {
                     "result": True,
-                    "msg": tea_prof.homework
+                    "msg": stu_homework.homework
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
-

@@ -43,6 +43,12 @@ class StudentController:
         total_present = models.Attendence.objects.filter(student=stu_obj,present=True).count()
         return user_obj,total_absent,total_present
 
+    def viewhomework(self,user: object):
+        stu_obj = models.Student.objects.get(user=user)
+        user_obj = User.objects.get(username = stu_obj.teacher.name.username)
+        tea_prof = models.TeacherProfile.objects.get(teacher=user_obj) 
+        return tea_prof   
+
 class TeachersController:
 
     def create_homework(self,user: object,homework: str):
